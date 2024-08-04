@@ -164,3 +164,5 @@ const updateProfile= async(req,res)=>{
           });
     }
 }
+
+export {login,logout,register,updateProfile}
