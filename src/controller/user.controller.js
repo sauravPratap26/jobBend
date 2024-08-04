@@ -9,7 +9,7 @@ const generateAccessAndRefreshToken = async (userId) => {
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
-    await user.save({validateBeforeSave: false})
+    await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
   } catch (error) {
     console.log(error);
@@ -32,14 +32,14 @@ const register = async (req, res) => {
     if (existedUser) {
       console.log(existedUser);
       throw new ApiError(409, "User Data already exists!!");
-    } 
-     const createdUser= await User.create({
-        fullName,
-        email,
-        phoneNumber,
-        password,
-        role,
-      });
+    }
+    const createdUser = await User.create({
+      fullName,
+      email,
+      phoneNumber,
+      password,
+      role,
+    });
     return res
       .status(201)
       .json(new ApiResponse(200, createdUser, "User registered Successfully"));
@@ -92,7 +92,6 @@ const login = async (req, res) => {
           {
             user: loggedInUser,
             accessToken,
-            refreshToken,
           },
           `Welcome Back ${loggedInUser.fullName}`
         )
@@ -137,32 +136,37 @@ const logout = async (req, res) => {
   }
 };
 
-const updateProfile= async(req,res)=>{
-    try {
-    const { bio,skills} = req.body;
+const updateProfile = async (req, res) => {
+  try {
+    const { bio, skills } = req.body;
     if (!bio && !skills) {
-        throw new ApiError(400,"Nothing there to update")
-      }
+      throw new ApiError(400, "Nothing there to update");
+    }
 
     // if ([email, password, role].some((field) => field?.trim() === "")) {
     //   throw new ApiError(400, "Please fill all the fields before login");
     // }
-    const skillsArray = skills ? skills.split(",").map(skill => skill.trim()) : undefined;
-    const user= await User.findById(req.user._id)
+    const skillsArray = skills
+      ? skills
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter((skill) => skill)
+      : [];
+
+    const user = await User.findById(req.user._id);
 
     if (skillsArray) user.profile.skills = skillsArray;
     if (bio) user.profile.bio = bio;
-    await user.save({validateBeforeSave: false})
+    await user.save({ validateBeforeSave: false });
     return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Profile updated successfully"))
-        
-    } catch (error) {
-        return res.status(error.code || 500).json({
-            success: false,
-            message: error.message,
-          });
-    }
-}
+      .status(200)
+      .json(new ApiResponse(200, {}, "Profile updated successfully"));
+  } catch (error) {
+    return res.status(error.code || 500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-export {login,logout,register,updateProfile}
+export { login, logout, register, updateProfile };
