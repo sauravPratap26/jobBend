@@ -1,5 +1,6 @@
-import { User } from "../models/user.model";
-import ApiError from "../utils/ApiError";
+import { User } from "../models/user.model.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -8,7 +9,7 @@ const generateAccessAndRefreshToken = async (userId) => {
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
+    await user.save({validateBeforeSave: false})
     return { accessToken, refreshToken };
   } catch (error) {
     console.log(error);
@@ -31,15 +32,14 @@ const register = async (req, res) => {
     if (existedUser) {
       console.log(existedUser);
       throw new ApiError(409, "User Data already exists!!");
-    } else {
-      await User.create({
+    } 
+     const createdUser= await User.create({
         fullName,
         email,
         phoneNumber,
         password,
         role,
       });
-    }
     return res
       .status(201)
       .json(new ApiResponse(200, createdUser, "User registered Successfully"));

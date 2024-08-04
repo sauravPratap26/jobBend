@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      required: true,
       enum: ["STUDENT", "RECRUIT"],
     },
     profile: {
@@ -37,9 +39,9 @@ const userSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
-      refreshToken: {
-        type: String,
-      },
+    },
+    refreshToken: {
+      type: String,
     },
   },
   { timestamps: true }
