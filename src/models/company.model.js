@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { User } from "./user.model.js";
 
 const companySchema = new mongoose.Schema(
   {
@@ -9,7 +10,7 @@ const companySchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      // required: true,
     },
     website: {
       type: String,
@@ -22,7 +23,7 @@ const companySchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
     },
   },
   { timestamps: true }

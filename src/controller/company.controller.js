@@ -1,6 +1,6 @@
-import ApiError from "../utils/ApiError";
-import Company from "../models/company.model.js";
-import ApiResponse from "../utils/ApiResponse";
+import { Company } from "../models/company.model.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
 const registerCompany = async (req, res) => {
   try {
     const { name } = req.body;
@@ -15,10 +15,11 @@ const registerCompany = async (req, res) => {
       name: name,
       userId: req.user._id,
     });
+    console.log(name)
     return res
       .status(201)
       .json(
-        new ApiResponse(200, createdUser, "Company registered Successfully")
+        new ApiResponse(200, createdCompany, "Company registered Successfully")
       );
   } catch (error) {
     return res.status(error.code || 500).json({
@@ -31,7 +32,9 @@ const registerCompany = async (req, res) => {
 const getCompany = async (req, res) => {
   try {
     const userId = req.user._id;
-    const companies = await Company.find({ userId });
+    const companies = await Company.find({ userId }).select(
+      "-createdAt -updatedAt"
+    );
     if (!companies) {
       throw new ApiError(400, "No company found");
     }
